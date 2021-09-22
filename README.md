@@ -1,21 +1,15 @@
 # How to improve the power consumption of LDC on BDR4261A
 ## Overview
-**LDC** (low duty cycle mode) with Long Range DSSS PHY is a great feature to fight with LORA. Regarding more deails on the theory of LDC, please refer to this article, [Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US).  
+**LDC** (low duty cycle mode) with Long Range DSSS PHY is a great feature for low power and long range. Regarding more deails on the theory of LDC, please refer to this article, [Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US).  
 But compared with example project, there still a huge room to improve the power consumption. Here is the test result for **Long Preamble Duty Cycle** example.
 ### Board configuations
-*4261A Board*  
- <div align="center">
-  <img src="images/4261A board.png">  
-</div>  
-</br>  
-
 *4261A settings*    
 - example:  Long Peamble Duty Cyle  
 - PHY:      Long Range profile 490M 9.6Kbps  
 - paramters:
     - Rx on time: 4167us
     - duty cycle period: 1.5s
-### Power consumption
+### Power consumption of example
 *4261A power consumption*  
 - Average current - 40.67 uA 
 <div align="center">
@@ -24,7 +18,7 @@ But compared with example project, there still a huge room to improve the power 
 </br>  
 
 ## How to improve the power consumption
-$$ Iavg = (Trx * Irx + Tsleep * Islepp) / Tperoid $$  
+***Iavg = (Trx * Irx + Tsleep * Islepp) / Tperoid*** 
 - ***Iavg*** - average current in one duty cycle
 - ***Trx*** - the time of Rx state
 - ***Irx*** - Rx current
@@ -44,7 +38,7 @@ $$ Iavg = (Trx * Irx + Tsleep * Islepp) / Tperoid $$
     - Radio configuations: Long Range profile 490M 9.6Kbps
 - The instrument required
     - Signal generator: E4432B
-    - Specturm analyzer: 
+    - Specturm analyzer: MS2692A 
     - Power analyzer: N6705C
 ## Creat a Long preamble duty cycle example project and configure
 1.  Start Simplicity Studio V5
@@ -118,8 +112,8 @@ void sli_power_manager_restore_high_freq_accuracy_clk(void)
 <img src="images/include path.png">
 
 ### Step 8: Calculate the minimum of Rx on time
-- Preamble detect need at least 40 bits. The formula is as follows.
-$$ Trx = 40 / 9.6 = 4.167 ms $$
+- Preamble detect need at least 40 bits. The formula is as follows.  
+***Trx = 40 / 9.6 = 4.167 ms***
 - Find ***the sl_duty_cycle_config.h*** in **config** catalog, and Modify the macro **DUTY_CYCLE_ON_TIME** to 4167.
 ```C
 #define DUTY_CYCLE_ON_TIME      (4167)
@@ -133,8 +127,11 @@ Find the same file as above, and enable EM2 mode and disable button as following
 
 ### Test the sleep current
 -  Build the project and flash the hex file to target board.
--  Use the instrument to test sleep current
-  
+-  Use the instrument to test sleep current. The sleep current as the following figure.
+<img src="images/sleep current.gif">  
+- Conclusion  
+ The sleep current is **1.94** uA after disable TCXO and unused GPIO.  
+
 ## How to reduce the Rx on time
 In the example peoject, the Rx on time is a fixed time even there is no any carrier in air. A appropriate approach is that radio will fast go to sleep when no preamble detection.
 ### Modity the timing of Preamble detection 
@@ -170,7 +167,7 @@ RAIL_RxDutyCycleConfig_t duty_cycle_config = {
 //  .parameter = ((uint32_t) DUTY_CYCLE_ON_TIME)
 };
 ```
--  Please find the ***sl_duty_utilicy.c*** file in the path ***gecko_sdk_3.2.1\app\flex\component\rail\sl_duty_cycle_core*** and modify the funcation of calculating preamble bit length as following. Please select the **Make a Ccopy** when you try to modify this file.  
+-  Please find the ***sl_duty_utilicy.c*** file in the path ***gecko_sdk_3.2.1/app/flex/component/rail/sl_duty_cycle_core*** and modify the funcation of calculating preamble bit length as following. Please select the **Make a Copy** when you try to modify this file.  
 ```C
 uint16_t calculate_preamble_bit_length_from_time(const uint32_t bit_rate, RAIL_RxDutyCycleConfig_t * duty_cycle_config)
 {
@@ -202,14 +199,14 @@ uint16_t calculate_preamble_bit_length_from_time(const uint32_t bit_rate, RAIL_R
 }
 ```
 ### Modify the Radio PHY configuations
-Please download the radio configuation file and replace the original file.  
+Please download the ***rail_config.c*** and ***rail_config.h*** file as the following link, and replace the original file in **Autogen** folder.  
 [Optimized 9p6k radio configuation](radio_configuations/optimized_9p6k_configuation)
 ## Test conclusion
 ### Power Consumption
 <img src="images/optimized power consumption.gif">
 
 **Iavg = 19.036 uA**  
-The power consumption of example is **40.674** uA, reduced 53% power consumption after optimizing. 
+The power consumption of example is **40.674** uA, reduced power consumption by **53%** after optimizing. 
 ### Sensitivity
 - Rx project: Optimized duty cycle
 -  Use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) to generate a waveform file and download the E4432B siganl generator. When the PER is 1%, the value at the monment represent the sensiticity.
@@ -226,6 +223,3 @@ Just ignore the setp of modification for TXCO controlling.
 [KBA: Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)  
 [UG460: EFR32 Series 1 Long Range Configuration Reference](https://www.silabs.com/documents/public/user-guides/ug460-efr32-series-1-long-range-configuration.pdf)  
 [Datasheet: EFR32FG14 Flex Gecko Proprietary Protocol SoC Family Data Sheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf)  
-
-
-
