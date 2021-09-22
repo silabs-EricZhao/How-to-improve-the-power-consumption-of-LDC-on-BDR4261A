@@ -1,7 +1,7 @@
 # How to improve the power consumption of LDC on BDR4261A
 ## Overview
 **LDC** (low duty cycle mode) with Long Range DSSS PHY is a great feature for low power and long range. Regarding more deails on the theory of LDC, please refer to this article, [Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US).  
-But compared with example project, there still a huge room to improve the power consumption. Here is the test result for **Long Preamble Duty Cycle** example.
+But in example project, there still a huge room to improve the power consumption. Here is the test result for **Long Preamble Duty Cycle** example.
 ### Board configuations
 *4261A settings*    
 - example:  Long Peamble Duty Cyle  
@@ -12,10 +12,7 @@ But compared with example project, there still a huge room to improve the power 
 ### Power consumption of example
 *4261A power consumption*  
 - Average current - 40.67 uA 
-<div align="center">
-  <img src="images/4261A LDC power consumption.gif">  
-</div>  
-</br>  
+<img src="images/4261A LDC power consumption.gif">   
 
 ## How to improve the power consumption
 ***Iavg = (Trx * Irx + Tsleep * Islepp) / Tperoid*** 
@@ -52,11 +49,10 @@ But compared with example project, there still a huge room to improve the power 
 9. In the **Other settings** field, make sure the **Long Range Mode** is **LR_9p6k**.
 10. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 **Radio configuations as the below figure.**
-<img src="images/radio configuation.png">
-<img src="images/radio customized setting.png">  
+<img src="images/radio configuation.png"><img src="images/radio customized setting.png">  
 
 ## How to reduce the sleep current
-EFR32xG14 sleep current in EM2 mode can be as low as 1.3uA. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf).
+EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf).
 ### Step 1: Uninstall LED driver
 - Find the .slcp file and open it, In the **SOFTWARE COMPONENTS** field, search **LED** in software components. Uninstall the LED instance.
 - Comment *"the sl_simple_led_instances.h"* head file in *app_init.c* file and *app_process.c* file.
@@ -130,11 +126,11 @@ Find the same file as above, and enable EM2 mode and disable button as following
 -  Use the instrument to test sleep current. The sleep current as the following figure.
 <img src="images/sleep current.gif">  
 
-- Conclusion
-The sleep current is **1.94 uA** after disable TCXO and unused GPIO. Due to the SOC still has some GPIO is working, so the result is in accord with the data from datasheet.  
+- Conclusion  
+The sleep current is **1.94uA** after disable TCXO and unused GPIO. Due to there still some GPIO is working, so the result is in accord with the data from datasheet.  
 
 ## How to reduce the Rx on time
-In the example peoject, the Rx on time is a fixed time even there is no any carrier in air. A appropriate approach is that radio will fast go to sleep when no preamble detection.
+In the example peoject, the Rx on time is a fixed time even there is no any carrier in air. An appropriate approach is that radio will fast go to sleep when no any preamble is detected.
 ### Modity the timing of Preamble detection 
 -  Add the macro to ***sl_duty_cycle_config.h*** file as following.
 ```C
