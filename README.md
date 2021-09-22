@@ -129,8 +129,9 @@ Find the same file as above, and enable EM2 mode and disable button as following
 -  Build the project and flash the hex file to target board.
 -  Use the instrument to test sleep current. The sleep current as the following figure.
 <img src="images/sleep current.gif">  
-- Conclusion  
- The sleep current is **1.94** uA after disable TCXO and unused GPIO.  
+
+- Conclusion
+The sleep current is **1.94 uA** after disable TCXO and unused GPIO. Due to the SOC still has some GPIO is working, so the result is in accord with the data from datasheet.  
 
 ## How to reduce the Rx on time
 In the example peoject, the Rx on time is a fixed time even there is no any carrier in air. A appropriate approach is that radio will fast go to sleep when no preamble detection.
