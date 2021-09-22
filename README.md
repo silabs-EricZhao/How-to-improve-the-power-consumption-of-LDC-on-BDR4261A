@@ -3,7 +3,7 @@
 **LDC** (low duty cycle mode) with Long Range DSSS PHY is a great feature for low power and long range. Regarding more deails on the theory of LDC, please refer to this article, [Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US).  
 But in example project, there still a huge room to improve the power consumption. Here is the test result for **Long Preamble Duty Cycle** example.
 ### Board configuations
-*4261A settings*    
+**4261A settings**    
 - example:  Long Peamble Duty Cyle  
 - PHY:      Long Range profile 490M 9.6Kbps  
 - paramters:
@@ -15,6 +15,8 @@ But in example project, there still a huge room to improve the power consumption
 <img src="images/4261A LDC power consumption.gif">   
 
 ## How to improve the power consumption
+The formula of average current on one duty cycle is as follows.  
+
 ***Iavg = (Trx * Irx + Tsleep * Islepp) / Tperoid*** 
 - ***Iavg*** - average current in one duty cycle
 - ***Trx*** - the time of Rx state
@@ -47,10 +49,10 @@ But in example project, there still a huge room to improve the power consumption
 7. In the **General Settings** field, select the radio profile **Long Range Profile**,select the radio PHY **434MHz 9.6Kbps OQPSK DSSS SF8**.
 8. Enable **Customized**, in the **Operational Frequency** field, fill the **Base Channel Frequency** to **490MHz**. 
 9. In the **Other settings** field, make sure the **Long Range Mode** is **LR_9p6k**.
-10. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
-**Radio configuations as the below figure.**
+10. Radio configuations as the following figure.
 <img src="images/radio configuation.png">
 <img src="images/radio customized setting.png">  
+11. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 
 ## How to reduce the sleep current
 EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf).
