@@ -49,7 +49,8 @@ But in example project, there still a huge room to improve the power consumption
 9. In the **Other settings** field, make sure the **Long Range Mode** is **LR_9p6k**.
 10. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 **Radio configuations as the below figure.**
-<img src="images/radio configuation.png"><img src="images/radio customized setting.png">  
+<img src="images/radio configuation.png">
+<img src="images/radio customized setting.png">  
 
 ## How to reduce the sleep current
 EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf).
