@@ -38,7 +38,7 @@ But compared with example project, there still a huge room to improve the power 
     - Radio configuations: Long Range profile 490M 9.6Kbps
 - The instrument required
     - Signal generator: E4432B
-    - Specturm analyzer: MS2692A 
+    - Spectrum analyzer: MS2692A 
     - Power analyzer: N6705C
 ## Creat a Long preamble duty cycle example project and configure
 1.  Start Simplicity Studio V5
