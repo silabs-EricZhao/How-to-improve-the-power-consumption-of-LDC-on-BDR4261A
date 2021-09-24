@@ -100,8 +100,8 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
       ```
 
    -  Include The TCXO control head file. Add the ***#include "sl_board_control.h"*** to this file. 
-   -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.
-    <img src="images/include path.png">
+   -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.  
+      <img src="images/include path.png">
 
 8. **Calculate the minimum of Rx on time**
    - Preamble detect need at least 40 bits. The formula is as follows.  
@@ -123,7 +123,7 @@ Find the ***the sl_duty_cycle_config.h*** file as above, and enable EM2 mode and
 ### Test the sleep current
 -  Build the project and flash the hex file to target board.
 -  Use the instrument to test sleep current. The sleep current as the following figure.  
-  <img src="images/sleep current.gif">  
+    <img src="images/sleep current.gif">  
 
 - Conclusion  
 The sleep current is **1.94uA** after disable TCXO and unused GPIO. Due to there still some GPIO is working, so the result is in accord with the data from datasheet.  
@@ -202,19 +202,19 @@ Please download the ***rail_config.c*** and ***rail_config.h*** file as the foll
 
 ## Test conclusion
 ### Power Consumption
-**Iavg = 19.036 uA**  
+After optimzing the EM2 current and radio HPY. **Iavg = 19.036 uA**  
 <img src="images/optimized power consumption.gif">
 
-
+Below table is the comparison between the sample project and the optimized project.
 |   project   |sample peoject| optimized project| 
 |:----:| :-----------:| :----------------| 
 |**average current**| 40.674 uA| 19.036 uA |  
 
-The power consumption of example is **40.674** uA, reduced power consumption by **53%** after optimizing. 
+**Conclusion:** The power consumption reduce by **53%** to **19.036 uA** after optimizing. 
 ### Sensitivity
 - Rx project: Optimized duty cycle
 -  Use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) to generate a waveform file and download the E4432B siganl generator. When the PER is 1%, the value at the monment represent the sensiticity.
--  Sensitivity is **-118.4 dBm** after optimizing.  
+-  Sensitivity is **-118.4 dBm** after optimizing, below table shows the test data.  
   
     |  output power    |Tx packets| Rx packets| 
     |:----:| :-----------:| :----------------| 
@@ -231,7 +231,7 @@ The power consumption of example is **40.674** uA, reduced power consumption by 
     |:----:| :-----------:| :----------------| 
     |**sensitivity**| -119.1 dBm| -118.4 dBm|    
 
--  Compared with original example,There is a **0.7 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
+  **Conclusion:** Compared with original example,There is a **0.7 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
 ## FAQ
 ### Can we use the approach for other bitrate, for instance, 19.2kbps or 1.2kbps?
 So far this tutorial is only for **9.6kbps**. If you want to implment it for 1.2kbps or 19.2kbps, please contact with the slicion labs FAE.
