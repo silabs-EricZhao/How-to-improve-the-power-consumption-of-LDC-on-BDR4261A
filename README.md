@@ -1,7 +1,7 @@
 # How to improve the power consumption of LDC on BDR4261A
 ## Overview
 **LDC** (low duty cycle mode) with Long Range DSSS PHY is a great feature for low power and long range. Regarding more deails on the theory of LDC, please refer to this article, [Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US).  
-But in example project, there still a huge room to improve the power consumption. 
+But in the sample project, there is still a huge room to improve the power consumption. 
 ## Preparation
 - Hardware   
     - BDR4261A (EFR32FG14P233F256GM48)  
@@ -101,7 +101,7 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
 
    -  Include The TCXO control head file. Add the ***#include "sl_board_control.h"*** to this file. 
    -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.
-  <img src="images/include path.png">
+    <img src="images/include path.png">
 
 8. **Calculate the minimum of Rx on time**
    - Preamble detect need at least 40 bits. The formula is as follows.  
@@ -116,6 +116,9 @@ Find the ***the sl_duty_cycle_config.h*** file as above, and enable EM2 mode and
     #define DUTY_CYCLE_USE_LCD_BUTTON      0
     #define DUTY_CYCLE_ALLOW_EM2           1
     ```
+10. **Build project and flash to device**
+    - Click the hammer icon build the current project.
+    - After compiling is completed, find the binary file is located in **binaries** catalog, right click->**Flash to device...**->**choose the target device**->**OK**.    
 
 ### Test the sleep current
 -  Build the project and flash the hex file to target board.
@@ -192,8 +195,11 @@ In the sample project, the Rx on time is a fixed time even there is no any carri
     }
     ```
 ### Modify the Radio PHY configuations
-Please download the ***rail_config.c*** and ***rail_config.h*** file as the following link, and replace the original file in **Autogen** folder.  
-[Optimized 9p6k radio configuation](radio_configuations/optimized_9p6k_configuation)
+Please download the ***rail_config.c*** and ***rail_config.h*** file as the following link, and replace the original file is located in **Autogen** folder, rebuild the project and flash to the device.   
+[Optimized 9p6k radio configuation](radio_configuations/optimized_9p6k_configuation)  
+
+**Note**: Those two files will be overwritten if you change anythings in radio generator.  
+
 ## Test conclusion
 ### Power Consumption
 **Iavg = 19.036 uA**  
