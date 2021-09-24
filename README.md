@@ -1,7 +1,7 @@
 # How to improve the power consumption of LDC on BDR4261A
 ## Overview
 **LDC** (low duty cycle mode) with Long Range DSSS PHY is a great feature for low power and long range. Regarding more deails on the theory of LDC, please refer to this article, [Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US).  
-But in example project, there still a huge room to improve the power consumption. Here is the test result for **Long Preamble Duty Cycle** example.
+But in example project, there still a huge room to improve the power consumption. 
 ## Preparation
 - Hardware   
     - BDR4261A (EFR32FG14P233F256GM48)  
@@ -40,9 +40,9 @@ The formula of average current on one duty cycle is as follows.
 7. In the **General Settings** field, select the radio profile **Long Range Profile**,select the radio PHY **434MHz 9.6Kbps OQPSK DSSS SF8**.
 8. Enable **Customized**, in the **Operational Frequency** field, fill the **Base Channel Frequency** to **490MHz**. 
 9. In the **Other settings** field, make sure the **Long Range Mode** is **LR_9p6k**.
-10. Radio configuations as the following figure.
-<img src="images/radio configuation.png">
-<img src="images/radio customized setting.png">  
+10. Radio configuations as the following figure.  
+<img src="images/radio configuation.png" style="zoom:50%">
+<img src="images/radio customized setting.png" style="zoom:50%">  
 
 11. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 
@@ -60,7 +60,7 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
    -  Search the **Graphics**, uninstall the **GLIB Graphics Library** component.
 5. **Disable unused GPIO**
    -  Find the .pintool file and open it, change the unused GPIO mode to **None** as the fllowing figure.
-<img src="images/PIN tool configuration.png">  
+<img src="images/PIN tool configuration.png" style="zoom:50%">  
 
 6. **Disable Vcom**  
    -  Search **board control** in software components, and click **configurate**. In the **Genteral** field, disable the **Enable Virtual COM UART** button.
@@ -68,37 +68,38 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
    -  **Note**: If your board do not use TCXO, please ignore this step. I assume you use the 4261A board in here.
    -  Find the ***sl_power_manager_hal_s0_s1.c*** in the path **gecko_sdk_3.2.1/platform/service/power_manager/src/sl_power_manager_hal_s0_s1.c** , and open it.
    -  Try to modify the ***void sli_power_manager_handle_pre_deepsleep_operations(void)*** and ***void sli_power_manager_restore_high_freq_accuracy_clk(void)***, Simplicity Studio will pop up a warning box, click the **Make a Copy** to copy the this file from SDK library to project workspace.  
-  <img src="images/make a copy.png">
+    <img src="images/make a copy.png" style="zoom:50%">
 
-   - Modify the functions in ***sl_power_manager_hal_s0_s1.c*** file as the follows.  
+   - Modify the functions in ***sl_power_manager_hal_s0_s1.c*** file as the follows.    
 
-    ```C
-    /***************************************************************************//**
-    * Handle pre-deepsleep operations if any are necessary, like manually disabling
-    * oscillators, change clock settings, etc.
-    ******************************************************************************/
-    void sli_power_manager_handle_pre_deepsleep_operations(void)
+      ```C  
+      /***************************************************************************//**
+      * Handle pre-deepsleep operations if any are necessary, like manually disabling
+      * oscillators, change clock settings, etc.
+      ******************************************************************************/
+      void sli_power_manager_handle_pre_deepsleep_operations(void)
+        {
+          if (is_hf_x_oscillator_used) {
+              CMU_OscillatorEnable(cmuOsc_HFRCO, true, true);
+              CMU_HFRCOBandSet(cmuHFRCOFreq_38M0Hz);
+              CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFRCO);
+              CMU_OscillatorEnable(cmuOsc_HFXO, false, false);
+              sl_board_disable_oscillator(SL_BOARD_OSCILLATOR_TCXO);
+          }
+        } 
+        
+        /***************************************************************************//**
+      * Handle post-sleep operations if any are necessary, like manually enabling
+      * oscillators, change clock settings, etc.
+      ******************************************************************************/
+      void sli_power_manager_restore_high_freq_accuracy_clk(void)
       {
         if (is_hf_x_oscillator_used) {
-            CMU_OscillatorEnable(cmuOsc_HFRCO, true, true);
-            CMU_HFRCOBandSet(cmuHFRCOFreq_38M0Hz);
-            CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFRCO);
-            CMU_OscillatorEnable(cmuOsc_HFXO, false, false);
-            sl_board_disable_oscillator(SL_BOARD_OSCILLATOR_TCXO);
+            sl_board_enable_oscillator(SL_BOARD_OSCILLATOR_TCXO);
         }
       } 
-      
-      /***************************************************************************//**
-    * Handle post-sleep operations if any are necessary, like manually enabling
-    * oscillators, change clock settings, etc.
-    ******************************************************************************/
-    void sli_power_manager_restore_high_freq_accuracy_clk(void)
-    {
-      if (is_hf_x_oscillator_used) {
-          sl_board_enable_oscillator(SL_BOARD_OSCILLATOR_TCXO);
-      }
-    } 
       ```
+
    -  Include The TCXO control head file. Add the ***#include "sl_board_control.h"*** to this file. 
    -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.
 <img src="images/include path.png">
@@ -110,8 +111,8 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
       ```C
       #define DUTY_CYCLE_ON_TIME      (4167)
       ```   
-9. **Enable EM2 mode and disable button**
-Find the same file as above, and enable EM2 mode and disable button as following.
+9. **Enable EM2 mode and disable button**  
+Find the ***the sl_duty_cycle_config.h*** file as above, and enable EM2 mode and disable button as following.
     ```c
     #define DUTY_CYCLE_USE_LCD_BUTTON      0
     #define DUTY_CYCLE_ALLOW_EM2           1
@@ -120,12 +121,12 @@ Find the same file as above, and enable EM2 mode and disable button as following
 ### Test the sleep current
 -  Build the project and flash the hex file to target board.
 -  Use the instrument to test sleep current. The sleep current as the following figure.
-<img src="images/sleep current.gif">  
+  <img src="images/sleep current.gif">  
 
 - Conclusion  
 The sleep current is **1.94uA** after disable TCXO and unused GPIO. Due to there still some GPIO is working, so the result is in accord with the data from datasheet.  
 
-## How to reduce the Rx on time
+## How to optomize the Rx on time
 In the sample project, the Rx on time is a fixed time even there is no any carrier in air. An appropriate approach is that radio will fast go to sleep when no any preamble is detected.
 ### Modity the timing of Preamble detection 
 -  Add the macro to ***sl_duty_cycle_config.h*** file as following.
