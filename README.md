@@ -225,25 +225,25 @@ Below table is the comparison of power consumption between the sample project an
     |**-118.4 dBm**| **1000** | **991** |
     |-118.3 dBm| 1000 | 994 |
 
--  The sensitivity of original long preamble duty cycle is **-119.4 dBm**. Below table shows the test data.
+-  The sensitivity of original long preamble duty cycle is **-119.2 dBm**. Below table shows the test data.
     |  output power    |Tx packets| Rx packets| 
     |:----:| :-----------:| :----------------:| 
-    |-119.2 dBm| 1000 | 979 |
-    |-119.8 dBm| 1000 | 987 |
-    |-119.6 dBm| 1000 | 985 |
-    |-119.5 dBm| 1000 | 988 | 
-    |**-119.4 dBm**| **1000** | **994** |
-    |-119.3 dBm| 1000 | 994 |
+    |-119.8 dBm| 1000 | 981 |
+    |-119.6 dBm| 1000 | 987 |
+    |-119.4 dBm| 1000 | 984 |
+    |**-119.2 dBm**| **1000** | **993** | 
+    |-119.1 dBm| 1000 | 995 |
+   
 -  Below table is the comparison of sensitivity between the sample project and the optimized project.     
 
     |   project   |sample peoject| optimized project| 
     |:----:| :-----------:| :----------------| 
-    |**sensitivity**| -119.4 dBm| -118.4 dBm|    
+    |**sensitivity**| -119.2 dBm| -118.4 dBm|    
 
-  **Conclusion:** Compared with original example,There is a **1 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
+  **Conclusion:** Compared with original example, there is a **0.8 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
 ## FAQ
 ### Can we use the approach for other bitrate, for instance, 19.2kbps or 1.2kbps?
-So far this tutorial is only for **9.6kbps**. If you want to implment it for 1.2kbps or 19.2kbps, please contact with the slicion labs FAE.
+So far this tutorial is only for **9.6kbps**. If you want to optimize it for 1.2kbps or 19.2kbps, please contact with the slicion labs FAE.
 ### How to implement it on the board without TCXO ?
 Just ignore the setp of modification for TXCO controlling.
 ## References
