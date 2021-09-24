@@ -41,8 +41,7 @@ The formula of average current on one duty cycle is as follows.
 8. Enable **Customized**, in the **Operational Frequency** field, fill the **Base Channel Frequency** to **490MHz**. 
 9. In the **Other settings** field, make sure the **Long Range Mode** is **LR_9p6k**.
 10. Radio configuations as the following figure.  
-<img src="images/radio configuation.png" width="50%" height="50%">
-<img src="images/radio customized setting.png" width="50%" height="50%">  
+<img src="images/radio configuation.png" width="40%" height="40%"><img src="images/radio customized setting.png" width="40%" height="40%">  
 
 11. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 
@@ -59,8 +58,8 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
 4. **Uninstall Graphics Library**  
    -  Search the **Graphics**, uninstall the **GLIB Graphics Library** component.
 5. **Disable unused GPIO**
-   -  Find the .pintool file and open it, change the unused GPIO mode to **None** as the fllowing figure.
-<img src="images/PIN tool configuration.png" width="50%" height="50%"">  
+   -  Find the .pintool file and open it, change the unused GPIO mode to **None** as the fllowing figure.  
+    <img src="images/PIN tool configuration.png" width="50%" height="50%">    
 
 6. **Disable Vcom**  
    -  Search **board control** in software components, and click **configurate**. In the **Genteral** field, disable the **Enable Virtual COM UART** button.
