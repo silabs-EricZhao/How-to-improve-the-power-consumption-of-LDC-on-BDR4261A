@@ -30,7 +30,7 @@ The formula of average current on one duty cycle is as follows.
 - Reduce the sleep current
 - Reduce the Rx on time
 
-## Creat a Long preamble duty cycle example project and configure
+## Creat a Long preamble duty cycle example project and configure it
 1.  Start Simplicity Studio V5
 2.  Go to **Project**->**New**->**Silicon Labs Wizard...**
 3.  Choose the board or device, select the SDK version V3.2.1, and then choose the **NEXT**.
@@ -45,7 +45,7 @@ The formula of average current on one duty cycle is as follows.
 
 11. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 
-## How to reduce the sleep current
+## How to optimize the current in EM2 mode
 EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf).
 1.  **Uninstall LED driver**  
     - Find the .slcp file and open it, In the **SOFTWARE COMPONENTS** field, search **LED** in software components. Uninstall the LED instance.
@@ -59,15 +59,15 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
    -  Search the **Graphics**, uninstall the **GLIB Graphics Library** component.
 5. **Disable unused GPIO**
    -  Find the .pintool file and open it, change the unused GPIO mode to **None** as the fllowing figure.  
-    <img src="images/PIN tool configuration.png" width="50%" height="50%">    
+      <img src="images/PIN tool configuration.png" width="50%" height="50%">    
 
 6. **Disable Vcom**  
    -  Search **board control** in software components, and click **configurate**. In the **Genteral** field, disable the **Enable Virtual COM UART** button.
 7. **Add TCXO control funcation**   
    -  **Note**: If your board do not use TCXO, please ignore this step. I assume you use the 4261A board in here.
    -  Find the ***sl_power_manager_hal_s0_s1.c*** in the path **gecko_sdk_3.2.1/platform/service/power_manager/src/sl_power_manager_hal_s0_s1.c** , and open it.
-   -  Try to modify the ***void sli_power_manager_handle_pre_deepsleep_operations(void)*** and ***void sli_power_manager_restore_high_freq_accuracy_clk(void)***, Simplicity Studio will pop up a warning box, click the **Make a Copy** to copy the this file from SDK library to project workspace.  
-    <img src="images/make a copy.png" width="50%" height="50%">
+   -  Try to modify the ***void sli_power_manager_handle_pre_deepsleep_operations(void)*** and ***void sli_power_manager_restore_high_freq_accuracy_clk(void)***, Simplicity Studio will pops up a warning box, click the **Make a Copy** to copy the this file from SDK library to project workspace.  
+      <img src="images/make a copy.png" width="50%" height="50%">
 
    - Modify the functions in ***sl_power_manager_hal_s0_s1.c*** file as the follows.    
 
@@ -122,7 +122,7 @@ Find the ***the sl_duty_cycle_config.h*** file as above, and enable EM2 mode and
 
 ### Test the sleep current
 -  Build the project and flash the hex file to target board.
--  Use the instrument to test sleep current. The sleep current as the following figure.
+-  Use the instrument to test sleep current. The sleep current as the following figure.  
   <img src="images/sleep current.gif">  
 
 - Conclusion  
@@ -145,7 +145,7 @@ In the sample project, the Rx on time is a fixed time even there is no any carri
     #define DUTY_CYCLY_MARGIN_TIME      1000
     #define DUTY_CYCLY_SYNC_TIMEOUT     (DUTY_CYCLY_SYNC_WORDS_TIME + DUTY_CYCLE_PERIOD + DUTY_CYCLE_ON_TIME + DUTY_CYCLY_MARGIN_TIME)
     ```
--  Define the variable and configurate the timing for duty cycle as following.
+-  Define the variable in ***app_init.c*** file and configurate the timing of duty cycle as following.
     ```C
     volatile RAIL_RxChannelHoppingConfigMultiMode_t duty_cycle_multi_mode_config = {
         .timingSense = 1600,
@@ -163,7 +163,7 @@ In the sample project, the Rx on time is a fixed time even there is no any carri
     //  .parameter = ((uint32_t) DUTY_CYCLE_ON_TIME)
     };
     ```
--  Please find the ***sl_duty_utilicy.c*** file in the path ***gecko_sdk_3.2.1/app/flex/component/rail/sl_duty_cycle_core*** and modify the funcation of calculating preamble bit length as following. Please select the **Make a Copy** when you try to modify this file.  
+-  Please find the ***sl_duty_utilicy.c*** file in the path ***gecko_sdk_3.2.1/app/flex/component/rail/sl_duty_cycle_core*** and modify the funcation of calculating preamble bit length as following. Please select the **Make a Copy** when you try to change this file.  
     ```C
     uint16_t calculate_preamble_bit_length_from_time(const uint32_t bit_rate, RAIL_RxDutyCycleConfig_t * duty_cycle_config)
     {
@@ -208,7 +208,7 @@ Please download the ***rail_config.c*** and ***rail_config.h*** file as the foll
 
 |   project   |sample peoject| optimized project| 
 |:----:| :-----------:| :----------------| 
-|average current| 40.674 uA| 19.036 uA |  
+|**average current**| 40.674 uA| 19.036 uA |  
 
 The power consumption of example is **40.674** uA, reduced power consumption by **53%** after optimizing. 
 ### Sensitivity
@@ -229,7 +229,7 @@ The power consumption of example is **40.674** uA, reduced power consumption by 
 
     |   project   |sample peoject| optimized project| 
     |:----:| :-----------:| :----------------| 
-    |sensitivity| -119.1 dBm| -118.4 dBm|    
+    |**sensitivity**| -119.1 dBm| -118.4 dBm|    
 
 -  Compared with original example,There is a **0.7 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
 ## FAQ
