@@ -202,36 +202,45 @@ Please download the ***rail_config.c*** and ***rail_config.h*** file as the foll
 
 ## Test conclusion
 ### Power Consumption
-After optimzing the EM2 current and radio HPY. **Iavg = 19.036 uA**  
+After optimzing the EM2 current and radio PHY. **Iavg = 19.036 uA**  
 <img src="images/optimized power consumption.gif">
 
-Below table is the comparison between the sample project and the optimized project.
+Below table is the comparison of power consumption between the sample project and the optimized project.
 |   project   |sample peoject| optimized project| 
-|:----:| :-----------:| :----------------| 
+|:----:| :-----------:| :----------------:| 
 |**average current**| 40.674 uA| 19.036 uA |  
 
 **Conclusion:** The power consumption reduce by **53%** to **19.036 uA** after optimizing. 
 ### Sensitivity
-- Rx project: Optimized duty cycle
+- Rx project: Optimized long preamble duty cycle
 -  Use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) to generate a waveform file and download the E4432B siganl generator. When the PER is 1%, the value at the monment represent the sensiticity.
--  Sensitivity is **-118.4 dBm** after optimizing, below table shows the test data.  
+-  Sensitivity is **-118.4 dBm** after optimizing. Below table shows the test data.  
   
     |  output power    |Tx packets| Rx packets| 
-    |:----:| :-----------:| :----------------| 
+    |:----:| :-----------:| :----------------:| 
     |-119.2 dBm| 1000 | 974 |
     |-118.8 dBm| 1000 | 982 |
     |-118.6 dBm| 1000 | 989 |
     |-118.5 dBm| 1000 | 987 | 
-    |-118.4 dBm| 1000 | 991 |
+    |**-118.4 dBm**| **1000** | **991** |
     |-118.3 dBm| 1000 | 994 |
 
--  The sensitivity of original example is **-119.1 dBm**.  
+-  The sensitivity of original long preamble duty cycle is **-119.4 dBm**. Below table shows the test data.
+    |  output power    |Tx packets| Rx packets| 
+    |:----:| :-----------:| :----------------:| 
+    |-119.2 dBm| 1000 | 979 |
+    |-119.8 dBm| 1000 | 987 |
+    |-119.6 dBm| 1000 | 985 |
+    |-119.5 dBm| 1000 | 988 | 
+    |**-119.4 dBm**| **1000** | **994** |
+    |-119.3 dBm| 1000 | 994 |
+-  Below table is the comparison of sensitivity between the sample project and the optimized project.     
 
     |   project   |sample peoject| optimized project| 
     |:----:| :-----------:| :----------------| 
-    |**sensitivity**| -119.1 dBm| -118.4 dBm|    
+    |**sensitivity**| -119.4 dBm| -118.4 dBm|    
 
-  **Conclusion:** Compared with original example,There is a **0.7 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
+  **Conclusion:** Compared with original example,There is a **1 dBm** loss on sensitivity. But the loss is trivial and the optimization is well worth to do it.  
 ## FAQ
 ### Can we use the approach for other bitrate, for instance, 19.2kbps or 1.2kbps?
 So far this tutorial is only for **9.6kbps**. If you want to implment it for 1.2kbps or 19.2kbps, please contact with the slicion labs FAE.
