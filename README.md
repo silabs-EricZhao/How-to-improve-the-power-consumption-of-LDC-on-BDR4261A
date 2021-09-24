@@ -41,8 +41,8 @@ The formula of average current on one duty cycle is as follows.
 8. Enable **Customized**, in the **Operational Frequency** field, fill the **Base Channel Frequency** to **490MHz**. 
 9. In the **Other settings** field, make sure the **Long Range Mode** is **LR_9p6k**.
 10. Radio configuations as the following figure.  
-<img src="images/radio configuation.png" style="zoom:50%">
-<img src="images/radio customized setting.png" style="zoom:50%">  
+<img src="images/radio configuation.png" width="50%" height="50%">
+<img src="images/radio customized setting.png" width="50%" height="50%">  
 
 11. Finally, type **Ctrl+S** to save the current configuations. the radio generator will automatically generate the relevant codes.  
 
@@ -60,7 +60,7 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
    -  Search the **Graphics**, uninstall the **GLIB Graphics Library** component.
 5. **Disable unused GPIO**
    -  Find the .pintool file and open it, change the unused GPIO mode to **None** as the fllowing figure.
-<img src="images/PIN tool configuration.png" style="zoom:50%">  
+<img src="images/PIN tool configuration.png" width="50%" height="50%"">  
 
 6. **Disable Vcom**  
    -  Search **board control** in software components, and click **configurate**. In the **Genteral** field, disable the **Enable Virtual COM UART** button.
@@ -68,7 +68,7 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
    -  **Note**: If your board do not use TCXO, please ignore this step. I assume you use the 4261A board in here.
    -  Find the ***sl_power_manager_hal_s0_s1.c*** in the path **gecko_sdk_3.2.1/platform/service/power_manager/src/sl_power_manager_hal_s0_s1.c** , and open it.
    -  Try to modify the ***void sli_power_manager_handle_pre_deepsleep_operations(void)*** and ***void sli_power_manager_restore_high_freq_accuracy_clk(void)***, Simplicity Studio will pop up a warning box, click the **Make a Copy** to copy the this file from SDK library to project workspace.  
-    <img src="images/make a copy.png" style="zoom:50%">
+    <img src="images/make a copy.png" width="50%" height="50%">
 
    - Modify the functions in ***sl_power_manager_hal_s0_s1.c*** file as the follows.    
 
@@ -102,7 +102,7 @@ EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to 
 
    -  Include The TCXO control head file. Add the ***#include "sl_board_control.h"*** to this file. 
    -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.
-<img src="images/include path.png">
+  <img src="images/include path.png">
 
 8. **Calculate the minimum of Rx on time**
    - Preamble detect need at least 40 bits. The formula is as follows.  
@@ -203,7 +203,7 @@ Please download the ***rail_config.c*** and ***rail_config.h*** file as the foll
 
 |   project   |sample peoject| optimized project| 
 |:----:| :-----------:| :----------------| 
-|average current| 40.674 uA| 19.036 uA  
+|average current| 40.674 uA| 19.036 uA |  
 
 The power consumption of example is **40.674** uA, reduced power consumption by **53%** after optimizing. 
 ### Sensitivity
