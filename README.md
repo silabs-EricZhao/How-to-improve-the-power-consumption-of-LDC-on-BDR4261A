@@ -141,7 +141,7 @@ From the above analysis, we probably have two methods to decrease the average po
 According to the [EFR32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf), the above EM2 current consumption is close to the value mentioned in the datasheet. There still several peripherals are in use so the test result is expected. 
 
 ## Apply the optimized Radio Configuration for the DSSS long-range PHY
-Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK DSSS, the purpose is to reduce the average consumption of the Long Preamble Duty Cycle application and meanwhile maintain the sensitivity performance will not be decreased largely.
+Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK DSSS, the purpose is to reduce the average consumption of the Long Preamble Duty Cycle application and meanwhile maintain the sensitivity performance will not be decreased largely.  
 Below is the guide to applying the optimized radio configuration to the Long Preamble Duty Cycle example application.
 ### Modify the timing of preamble detection 
 -  Add the below macro to the ***sl_duty_cycle_config.h*** file.
