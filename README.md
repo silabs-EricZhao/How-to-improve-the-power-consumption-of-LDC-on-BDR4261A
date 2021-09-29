@@ -1,20 +1,19 @@
 # How to improve the power consumption of LDC on BDR4261A
 ## Overview
-The Flex SDK provides the **Long Preamble Duty Cycle** example application which is widely used by lots of customers in different industry scenarios like Smart Meter, Smart Medica, etc. In most of the use cases, the product is working in duty cycle mode(more details please refer to this [KBA](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)) with DSSS long-range PHY to save power energy and in the meanwhile to reach a long communication distance. As the device is always powered by a battery, we expect to reduce the average power consumption of the device as much as possible.
+The **Flex SDK** provides the **Long Preamble Duty Cycle** example application which is widely used by lots of customers in different industry scenarios like Smart Meter, Smart Medica, etc. In most of the use cases, the product is working in duty cycle mode(more details please refer to this [KBA](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)) with DSSS long-range PHY to save power energy and in the meanwhile to reach a long communication distance. As the device is always powered by a battery, we expect to reduce the average power consumption of the device as much as possible.
 
 This article introduces a way to optimize the average power consumption of the Long Preamble Duty Cycle example application with the DSSS long-range PHY and provides a step-by-step guide to verify the solution on the BRD4261A radio board. The test result demonstrates the average power consumption decreases a lot after applying the optimized radio configuration.
-## Preparation
-- Hardware Required   
-    - BDR4261A (EFR32FG14P233F256GM48)
-    -  One BRD4261A (EFR32FG14P233F256GM48)
-    - Signal generator: E4432B
-    - Spectrum analyzer: MS2692A 
-    - Power analyzer: N6705C  
-- Software Required  
-    - Flex SDK version: V3.2.1
-    - IDE: Simplicity studio V5
-    - Example: Long Preamble Duty Cycle
-    - Radio configuations: Long Range profile 490M 9.6Kbps
+## Hardware Required   
+  - BDR4261A (EFR32FG14P233F256GM48)
+  -  One BRD4261A (EFR32FG14P233F256GM48)
+  - Signal generator: E4432B
+  - Spectrum analyzer: MS2692A 
+  - Power analyzer: N6705C  
+## Software Required  
+  - Flex SDK version: V3.2.1
+  - IDE: Simplicity studio V5
+  - Example: Long Preamble Duty Cycle
+  - Radio configuations:  Long Range Profile with 490M 9.6 kbps OQPSK DSSS
 
 ## The theoretical analysis of the power consumption
 The formula of average current on one duty cycle is as follows.  
@@ -31,7 +30,7 @@ The formula of average current on one duty cycle is as follows.
 From the above analysis, we probably have two methods to decrease the average power consumption: one is to decrease the sleep current, another is to reduce the Rx on time.
 
 ## How to create the Long Preamble Duty Cycle example application in Simplicity Studio  
-1.   click the "Simplicity IDE"，start Simplicity Studio V5
+1. Start Simplicity Studio V5, Click the **Simplicity IDE** perspective.
 2.  Go to **Project**->**New**->**Silicon Labs Wizard...**
 3.  Choose the board or device(we choose BRD4261A here), select the SDK version V3.2.1 and IAR or GNU ARM Toolchain, and then click the **NEXT**.
 4.  In the left **Technology Type** tab, choose the **Propriety**.
@@ -61,18 +60,17 @@ From the above analysis, we probably have two methods to decrease the average po
 
 17. **Disable Vcom**  
     -  Search **Board Control** in software components, and click the **Configure** button. In the **General** area, disable the **Enable Virtual COM UART** button.
-18. **Comment the LED control function**
+18. **Remove the LED control function**
     -  Open the ***app_init.c*** file and comment the ***#include "sl_simple_led_instances.h"*** and comment the ***sl_led_turn_off(&sl_led_led0)*** and ***sl_led_turn_off(&sl_led_led1)*** in  function ***RAIL_Handle_t app_init(void)***.
     -  Open the ***app_process.c*** file and comment the ***#include "sl_simple_led_instances.h"*** in the included header file area, and comment the ***sl_led_toggle(&sl_led_led1)*** and ***sl_led_toggle(&sl_led_led0)*** in  function ***void app_process_action(RAIL_Handle_t rail_handle)***.
 
-19. **Add TCXO control funcation**   
+19. **Add TCXO control function**   
     -  **Note**: If your board do not use TCXO, please ignore this step. I assume you use the 4261A board in here.
     -  Open the ***sl_power_manager_hal_s0_s1.c*** in the project folder: ***gecko_sdk_3.2.2->platform->service->power_manager->src***.
     -  Modify the ***void sli_power_manager_handle_pre_deepsleep_operations(void)*** and ***void sli_power_manager_restore_high_freq_accuracy_clk(void)*** functions as below code snippets. Note: you will see a pop-up warning box when modifying the code, click **Make a Copy** to copy the this file from SDK library to the project workspace.  
       <img src="images/make a copy.png" width="50%" height="50%">
 
-  
-        ```C  
+       ```C  
         /***************************************************************************//**
         * Handle pre-deepsleep operations if any are necessary, like manually disabling
         * oscillators, change clock settings, etc.
@@ -116,7 +114,7 @@ From the above analysis, we probably have two methods to decrease the average po
         #include <stdbool.h>
         ``` 
     -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.  
-      <img src="images/include path.png">
+      <img src="images/include path.png" width="50%" height="50%">
 
 20. **Configure the Duty Cycle**
     - Preamble detect need at least 40 bits. The formula is as follows.  
@@ -126,19 +124,19 @@ From the above analysis, we probably have two methods to decrease the average po
       #define DUTY_CYCLE_ON_TIME      (4167)
       ```   
 20. **Enable EM2 mode and disable button**  
-Find the ***the sl_duty_cycle_config.h*** file as above, and enable EM2 mode and disable button as following.
+Open the ***sl_duty_cycle_config.h*** file in the config folder, enable EM2 mode and disable button as following.
     ```c
     #define DUTY_CYCLE_USE_LCD_BUTTON      0
     #define DUTY_CYCLE_ALLOW_EM2           1
     ```
-21. **Build project and flash to device**
+21. **Build the project and flash the firmware**
     - Click the hammer icon to build the project.
     - After compiling is completed, the .s37 binary file is located at **binaries** folder, right-click the .s37 binary and choose **Flash to device...**->**choose the target device**->**OK**.   
 
 ### Measure EM2 current consumption  
 EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf). 
 
--  We use the power analyzer N6705C to measure the EM2 current consumption and get the average current consumption is about 1.94uA. For more info about how to measure the sleep current please refer to [AN969](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf) and also you can use the energy profile to measure it, please refer to [users-guide-tools-energy-profiler](https://docs.silabs.com/simplicity-studio-5-users-guide/latest/ss-5-users-guide-tools-energy-profiler/).  
+-  We use the power analyzer N6705C to measure the EM2 current consumption and get the average current consumption is about 1.94uA. For more info about how to measure the sleep current please refer to [AN969](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf).
     <img src="images/sleep current.gif">  
 
 - Conclusion  
@@ -219,13 +217,12 @@ Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK D
 
 ## Test Result
 ### Power Consumption
-After optimzing the EM2 current and radio PHY. **Iavg = 19.036 uA**  
 <img src="images/optimized power consumption.gif">
 
 The below table is the comparison of power consumption between the sample project with and without the optimization.
-|   project   |Original Project| optimized project| 
+|   Project   |Original Project| Optimized Project| 
 |:----:| :-----------:| :----------------:| 
-|**average current**| 40.674 uA| 19.036 uA |  
+|**Average Current**| 40.674 uA| 19.036 uA |  
 
 **Conclusion:** The average current consumption of the sample project with optimized radio configuration is **19.04uA**, which is much better than the average current consumption of the original sample project. From the table, the average current consumption reduces **53%**, which is a very huge improvement. 
 ### Sensitivity
@@ -233,7 +230,7 @@ The below table is the comparison of power consumption between the sample projec
 - We use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) and E4432B signal generator to measure the conducted sensitivity. Below is the test result, we can see the sensitivity of the optimized project is **-118.4 dBm**.
 
   
-    |  Output power    |Tx packets| Rx packets| 
+    |  Output Power    |Tx Packets| Rx Packets| 
     |:----:| :-----------:| :----------------:| 
     |-119.2 dBm| 1000 | 974 |
     |-118.8 dBm| 1000 | 982 |
@@ -243,7 +240,7 @@ The below table is the comparison of power consumption between the sample projec
     |-118.3 dBm| 1000 | 994 |
 
 -  The sensitivity of the original long preamble duty cycle project is **-119.2 dBm**.
-    |  Output power    |Tx packets| Rx packets| 
+    |  Output Power    |Tx Packets| Rx Packets| 
     |:----:| :-----------:| :----------------:| 
     |-119.8 dBm| 1000 | 981 |
     |-119.6 dBm| 1000 | 987 |
@@ -253,9 +250,9 @@ The below table is the comparison of power consumption between the sample projec
    
 -  The below table includes the comparison of sensitivity between the sample project and the optimized project.     
 
-    |   Project   |Sample peoject| Optimized project| 
+    |   Project   |Sample Project| Optimized Project| 
     |:----:| :-----------:| :----------------| 
-    |**sensitivity**| -119.2 dBm| -118.4 dBm|    
+    |**Sensitivity**| -119.2 dBm| -118.4 dBm|    
 
   **Conclusion:** The sensitivity of the sample project with optimized radio configuration reduces about **0.8 dBm**, which is insignificant and can be accepted by customers in order to get better power consumption.  
 ## FAQ
@@ -268,7 +265,6 @@ You can just ignore the steps of the modification for TXCO.
 -  [KBA: Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)  
 -  [UG460: EFR32 Series 1 Long Range Configuration Reference](https://www.silabs.com/documents/public/user-guides/ug460-efr32-series-1-long-range-configuration.pdf)  
 -  [Datasheet: EFR32FG14 Flex Gecko Proprietary Protocol SoC Family Data Sheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf)
--  [AN969: Measuring Power Consumption on wireless Gecko Devices](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf)   
--  [AN969: Measuring Power Consumption on
-Wireless Gecko Devices](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf)
+-  [AN969: Measuring Power Consumption on wireless Gecko Devices](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf)  
+
 
