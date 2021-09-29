@@ -3,17 +3,16 @@
 The **Flex SDK** provides the **Long Preamble Duty Cycle** example application which is widely used by lots of customers in different industry scenarios like Smart Meter, Smart Medica, etc. In most of the use cases, the product is working in duty cycle mode(more details please refer to this [KBA](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)) with DSSS long-range PHY to save power energy and in the meanwhile to reach a long communication distance. As the device is always powered by a battery, we expect to reduce the average power consumption of the device as much as possible.
 
 This article introduces a way to optimize the average power consumption of the Long Preamble Duty Cycle example application with the DSSS long-range PHY and provides a step-by-step guide to verify the solution on the BRD4261A radio board. The test result demonstrates the average power consumption decreases a lot after applying the optimized radio configuration.
-## Hardware Required   
-  - BDR4261A (EFR32FG14P233F256GM48)
-  -  One BRD4261A (EFR32FG14P233F256GM48)
-  - Signal generator: E4432B
-  - Spectrum analyzer: MS2692A 
-  - Power analyzer: N6705C  
+## Hardware Required
+  - One Radio Board: BRD4261A(EFR32FG14P233F256GM48)
+  - Signal Generator: E4432B
+  - Spectrum Analyzer: MS2692A 
+  - Power Analyzer: N6705C  
 ## Software Required  
-  - Flex SDK version: V3.2.1
-  - IDE: Simplicity studio V5
+  - Flex SDK Version: V3.2.1
+  - IDE: Simplicity Studio V5
   - Example: Long Preamble Duty Cycle
-  - Radio configuations:  Long Range Profile with 490M 9.6 kbps OQPSK DSSS
+  - Radio Configuations: Long Range Profile with 490M 9.6 kbps OQPSK DSSS
 
 ## The theoretical analysis of the power consumption
 The formula of average current on one duty cycle is as follows.  
@@ -30,11 +29,11 @@ The formula of average current on one duty cycle is as follows.
 From the above analysis, we probably have two methods to decrease the average power consumption: one is to decrease the sleep current, another is to reduce the Rx on time.
 
 ## How to create the Long Preamble Duty Cycle example application in Simplicity Studio  
-1. Start Simplicity Studio V5, Click the **Simplicity IDE** perspective.
-2.  Go to **Project**->**New**->**Silicon Labs Wizard...**
+1. Start Simplicity Studio V5, go to the **Simplicity IDE** perspective.
+2. Click **Project**->**New**->**Silicon Labs Wizard...**
 3.  Choose the board or device(we choose BRD4261A here), select the SDK version V3.2.1 and IAR or GNU ARM Toolchain, and then click the **NEXT**.
 4.  In the left **Technology Type** tab, choose the **Propriety**.
-5.  In the right example list, choose **Felx(RAIL)-Long Preamble Duty Cycle** example, and then choose the **NEXT** and click **FINISH**.
+5.   In the right example list, choose **Flex(RAIL)-Long Preamble Duty Cycle** example, and then click **NEXT**. You can modify the Project name and then click **FINISH**.
 6.  Double click the **long_preamble_duty_cycle.slcp** file in the Project Explorer and open it, then click the **CONFIGURATION TOOLS** and click the **open** the Radio Configurator.
 7. In the **General Settings**, choose the **Long Range Profile** in the Select radio profile area, and choose the **434MHz 9.6 kbps OQPSK DSSS SF8** in the Select radio PHY area.
 8. Enable the **Customized** button, set the **Base Channel Frequency** to **490MHz** in the **Operational Frequency** area. 
@@ -46,8 +45,8 @@ From the above analysis, we probably have two methods to decrease the average po
 
 ## Remove the unused peripherals to optimize the EM2 current 
 12.  **Uninstall LED driver**  
-     - Go to the **"long_preamble_duty_cycle.slcp"** file, click the **SOFTWARE COMPONENTS**, and search **LED** in software components. You can see the **Simple LED** component under Driver, click the **Uninstall** and delete the **led0** and **led1** instance, click **Done**. Uninstall the LED instance.    
-  Note: if anything needs to be modified in the .c or .h file, you can introduce it later, instead of mix it in the section. In there, we should focus on modifying the software components only.    
+     - Go to the **"long_preamble_duty_cycle.slcp"** file, click the **SOFTWARE COMPONENTS**, and search **LED** in software components. You can see the **Simple LED** component under Driver, click the **Uninstall** and delete the **led0** and **led1** instance, click **Done**.
+      
 13. **Uninstall Button driver**  
     -  Search **Button**, click the **Simple Button** component, and then click **Uninstall**, check the **btn0** and click **Done** in the pop-up dialog. 
 14. **Uninstall PTI component**  
@@ -64,13 +63,25 @@ From the above analysis, we probably have two methods to decrease the average po
     -  Open the ***app_init.c*** file and comment the ***#include "sl_simple_led_instances.h"*** and comment the ***sl_led_turn_off(&sl_led_led0)*** and ***sl_led_turn_off(&sl_led_led1)*** in  function ***RAIL_Handle_t app_init(void)***.
     -  Open the ***app_process.c*** file and comment the ***#include "sl_simple_led_instances.h"*** in the included header file area, and comment the ***sl_led_toggle(&sl_led_led1)*** and ***sl_led_toggle(&sl_led_led0)*** in  function ***void app_process_action(RAIL_Handle_t rail_handle)***.
 
-19. **Add TCXO control function**   
-    -  **Note**: If your board do not use TCXO, please ignore this step. I assume you use the 4261A board in here.
+19. **Add TCXO related functions**   
+    -  **Note**: If your board do not use TCXO, please ignore this step. We use the 4261A board in here.
     -  Open the ***sl_power_manager_hal_s0_s1.c*** in the project folder: ***gecko_sdk_3.2.2->platform->service->power_manager->src***.
     -  Modify the ***void sli_power_manager_handle_pre_deepsleep_operations(void)*** and ***void sli_power_manager_restore_high_freq_accuracy_clk(void)*** functions as below code snippets. Note: you will see a pop-up warning box when modifying the code, click **Make a Copy** to copy the this file from SDK library to the project workspace.  
-      <img src="images/make a copy.png" width="50%" height="50%">
+        <img src="images/make a copy.png" width="50%" height="50%">
 
-       ```C  
+       ```C
+       #include "em_device.h"
+        #if (defined(_SILICON_LABS_32B_SERIES_0) || defined(_SILICON_LABS_32B_SERIES_1))
+        #include "em_emu.h"
+        #include "em_cmu.h"
+        #include "em_assert.h"
+        #include "sl_power_manager_config.h"
+        #include "sl_power_manager.h"
+        #include "sli_power_manager_private.h"
+        #include "sl_sleeptimer.h"
+        #include "sli_sleeptimer.h"
+        #include "sl_board_control.h" // add this head file  
+        #include <stdbool.h>  
         /***************************************************************************//**
         * Handle pre-deepsleep operations if any are necessary, like manually disabling
         * oscillators, change clock settings, etc.
@@ -95,24 +106,10 @@ From the above analysis, we probably have two methods to decrease the average po
           if (is_hf_x_oscillator_used) {
               sl_board_enable_oscillator(SL_BOARD_OSCILLATOR_TCXO);
           }
-        } 
+        }   
         ```
 
-    -  Include The TCXO control head file. Add the ***#include "sl_board_control.h"*** to this file.
-        ```C
-        #include "em_device.h"
-        #if (defined(_SILICON_LABS_32B_SERIES_0) || defined(_SILICON_LABS_32B_SERIES_1))
-        #include "em_emu.h"
-        #include "em_cmu.h"
-        #include "em_assert.h"
-        #include "sl_power_manager_config.h"
-        #include "sl_power_manager.h"
-        #include "sli_power_manager_private.h"
-        #include "sl_sleeptimer.h"
-        #include "sli_sleeptimer.h"
-        #include "sl_board_control.h"
-        #include <stdbool.h>
-        ``` 
+    
     -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.  
       <img src="images/include path.png" width="50%" height="50%">
 
@@ -133,18 +130,16 @@ Open the ***sl_duty_cycle_config.h*** file in the config folder, enable EM2 mode
     - Click the hammer icon to build the project.
     - After compiling is completed, the .s37 binary file is located at **binaries** folder, right-click the .s37 binary and choose **Flash to device...**->**choose the target device**->**OK**.   
 
-### Measure EM2 current consumption  
-EFR32xG14 sleep current in EM2 mode can be as low as **1.3uA**. Please refer to the datasheet, [ERF32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf). 
+### Measure EM2 current consumption
+<img src="images/sleep current.gif">  
 
--  We use the power analyzer N6705C to measure the EM2 current consumption and get the average current consumption is about 1.94uA. For more info about how to measure the sleep current please refer to [AN969](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf).
-    <img src="images/sleep current.gif">  
+ We use the power analyzer N6705C to measure the EM2 current consumption and get the average current consumption is about 1.94uA. For more info about how to measure the sleep current please refer to [AN969](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf).
 
-- Conclusion  
 According to the EFR32FG14 datasheet, the above EM2 current consumption is close to the value mentioned in the datasheet. There still several peripherals are in use so the test result is expected. 
 
 ## Apply the optimized Radio Configuration for the DSSS long-range PHY
 Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK DSSS to reduce the average consumption. Below is the guide to applying it to the project.
-### Modify the timing of Preamble detection 
+### Modify the timing of preamble detection 
 -  Add the below macro to the ***sl_duty_cycle_config.h*** file.
     ```C
     #define DUTY_CYCLE_PERIOD        (1500000)
@@ -209,8 +204,8 @@ Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK D
     }
     ```
 ### Override the Radio Configuration
--  Please download the ***rail_config.c*** and ***rail_config.h*** file from the below link, and replace the original files located in the **Autogen** folder.  
-  [Optimized 9p6k radio configuation](radio_configuations/optimized_9p6k_configuation)  
+-  Please download the ***rail_config.c*** and ***rail_config.h*** file from the [Optimized 9p6k radio configuation](radio_configuations/optimized_9p6k_configuation), and replace the original files located in the **Autogen** folder.  
+   
 -  Rebuild the project, and flash the firmware to the device.  
 
 **Note**: Those two files will be overwritten if you change anythings in radio generator.  
@@ -222,41 +217,40 @@ Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK D
 The below table is the comparison of power consumption between the sample project with and without the optimization.
 |   Project   |Original Project| Optimized Project| 
 |:----:| :-----------:| :----------------:| 
-|**Average Current**| 40.674 uA| 19.036 uA |  
+|**Average Current**| 40.67 uA| 19.04 uA |  
 
-**Conclusion:** The average current consumption of the sample project with optimized radio configuration is **19.04uA**, which is much better than the average current consumption of the original sample project. From the table, the average current consumption reduces **53%**, which is a very huge improvement. 
+**Conclusion:**   
+The average current consumption of the sample project with optimized radio configuration is **19.04uA**, which is much better than the average current consumption of the original sample project. From the table, the average current consumption reduces **53%**, which is a very huge improvement. 
 ### Sensitivity
-- Rx project: Optimized long preamble duty cycle
-- We use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) and E4432B signal generator to measure the conducted sensitivity. Below is the test result, we can see the sensitivity of the optimized project is **-118.4 dBm**.
+We use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) and E4432B signal generator to measure the conducted sensitivity. Below is the test result, we can see the sensitivity of the optimized project is **-118.4 dBm**. 
+|  Output Power    |Tx Packets| Rx Packets| 
+|:----:| :-----------:| :----------------:| 
+|-119.2 dBm| 1000 | 974 |
+|-118.8 dBm| 1000 | 982 |
+|-118.6 dBm| 1000 | 989 |
+|-118.5 dBm| 1000 | 987 | 
+|**-118.4 dBm**| **1000** | **991** |
+|-118.3 dBm| 1000 | 994 |
 
-  
-    |  Output Power    |Tx Packets| Rx Packets| 
-    |:----:| :-----------:| :----------------:| 
-    |-119.2 dBm| 1000 | 974 |
-    |-118.8 dBm| 1000 | 982 |
-    |-118.6 dBm| 1000 | 989 |
-    |-118.5 dBm| 1000 | 987 | 
-    |**-118.4 dBm**| **1000** | **991** |
-    |-118.3 dBm| 1000 | 994 |
-
--  The sensitivity of the original long preamble duty cycle project is **-119.2 dBm**.
-    |  Output Power    |Tx Packets| Rx Packets| 
-    |:----:| :-----------:| :----------------:| 
-    |-119.8 dBm| 1000 | 981 |
-    |-119.6 dBm| 1000 | 987 |
-    |-119.4 dBm| 1000 | 984 |
-    |**-119.2 dBm**| **1000** | **993** | 
-    |-119.1 dBm| 1000 | 995 |
+The sensitivity of the original long preamble duty cycle project is **-119.2 dBm**.  
+|  Output Power    |Tx Packets| Rx Packets|
+|:----:| :-----------:| :----------------:| 
+|-119.8 dBm| 1000 | 981 |
+|-119.6 dBm| 1000 | 987 |
+|-119.4 dBm| 1000 | 984 |
+|**-119.2 dBm**| **1000** | **993** | 
+|-119.1 dBm| 1000 | 995 |
    
--  The below table includes the comparison of sensitivity between the sample project and the optimized project.     
+The below table includes the comparison of sensitivity between the sample project and the optimized project.     
 
-    |   Project   |Sample Project| Optimized Project| 
-    |:----:| :-----------:| :----------------| 
-    |**Sensitivity**| -119.2 dBm| -118.4 dBm|    
+|   Project   |Sample Project| Optimized Project| 
+|:----:| :-----------:| :----------------| 
+|**Sensitivity**| -119.2 dBm| -118.4 dBm|    
 
-  **Conclusion:** The sensitivity of the sample project with optimized radio configuration reduces about **0.8 dBm**, which is insignificant and can be accepted by customers in order to get better power consumption.  
+  **Conclusion:**   
+  The sensitivity of the sample project with optimized radio configuration reduces about **0.8 dBm**, which is insignificant and can be accepted by customers in order to get better power consumption.  
 ## FAQ
-### Can we use the approach for other bitrate, for instance, 19.2kbps or 1.2kbps?
+### Can we use the approach for other data rate, for instance, 19.2kbps or 1.2kbps?
 We only provide the optimized radio configuration for 9.6kbps on EFR32FG14 in this project, which can be covered for most of the use cases that power consumption is sensitive. Please feel free to contact the Silicon Labs FAE or Sales team if you have any other requirements.
 ### How to implement it on the board without TCXO ?
 You can just ignore the steps of the modification for TXCO.
