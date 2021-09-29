@@ -1,4 +1,4 @@
-# How to improve the power consumption of LDC on BDR4261A
+# How to optimize the current consumption of Long Preamble Duty Cycle application on FG14
 ## Overview
 The **Flex SDK** provides the **Long Preamble Duty Cycle** example application which is widely used by lots of customers in different industry scenarios like Smart Meter, Smart Medica, etc. In most of the use cases, the product is working in duty cycle mode(more details please refer to this [KBA](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)) with DSSS long-range PHY to save power energy and in the meanwhile to reach a long communication distance. As the device is always powered by a battery, we expect to reduce the average power consumption of the device as much as possible.
 
