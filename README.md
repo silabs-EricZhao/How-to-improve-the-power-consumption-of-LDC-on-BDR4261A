@@ -5,14 +5,14 @@ The **Flex SDK** provides the **Long Preamble Duty Cycle** example application w
 This article introduces a way to optimize the average power consumption of the Long Preamble Duty Cycle example application with the DSSS long-range PHY and provides a step-by-step guide to verify the solution on the BRD4261A radio board. The test result demonstrates the average power consumption decreases a lot after applying the optimized radio configuration.
 ## Hardware Required
   - One Radio Board: BRD4261A(EFR32FG14P233F256GM48)
-  - Signal Generator: E4432B
+  - Signal Generator: [E4432B](https://github.com/silabs-JimL/LR_WaveFormGenerator)
   - Spectrum Analyzer: MS2692A 
   - Power Analyzer: N6705C  
 ## Software Required  
   - Flex SDK Version: V3.2.1
   - IDE: Simplicity Studio V5
   - Example: Long Preamble Duty Cycle
-  - Radio Configuations: Long Range Profile with 490M 9.6 kbps OQPSK DSSS
+  - Radio Configurations: Long Range Profile with 490M 9.6 kbps OQPSK DSSS
 
 ## The theoretical analysis of the power consumption
 The formula of average current on one duty cycle is as follows.  
@@ -141,7 +141,8 @@ From the above analysis, we probably have two methods to decrease the average po
 According to the [EFR32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf), the above EM2 current consumption is close to the value mentioned in the datasheet. There still several peripherals are in use so the test result is expected. 
 
 ## Apply the optimized Radio Configuration for the DSSS long-range PHY
-Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK DSSS to reduce the average consumption. Below is the guide to applying it to the project.
+Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK DSSS, the purpose is to reduce the average consumption of the Long Preamble Duty Cycle application and meanwhile maintain the sensitivity performance will not be decreased largely.
+Below is the guide to applying the optimized radio configuration to the Long Preamble Duty Cycle example application.
 ### Modify the timing of preamble detection 
 -  Add the below macro to the ***sl_duty_cycle_config.h*** file.
     ```C
@@ -262,6 +263,7 @@ You can just ignore the steps of the modification for TXCO.
 -  [KBA: Low duty cycle mode](https://community.silabs.com/s/article/low-duty-cycle-mode?language=en_US)  
 -  [UG460: EFR32 Series 1 Long Range Configuration Reference](https://www.silabs.com/documents/public/user-guides/ug460-efr32-series-1-long-range-configuration.pdf)  
 -  [Datasheet: EFR32FG14 Flex Gecko Proprietary Protocol SoC Family Data Sheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf)
--  [AN969: Measuring Power Consumption on wireless Gecko Devices](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf)  
+-  [AN969: Measuring Power Consumption on wireless Gecko Devices](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf) 
+-  [Long Range Waveform Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) 
 
 
