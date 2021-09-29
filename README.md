@@ -111,7 +111,7 @@ From the above analysis, we probably have two methods to decrease the average po
 
     
     -  Add the ***sli_power_manager_private.h*** path to compiler. **Right click the project**->**properities**->**C/C++ build**->**setting**->**Tool setting**->**GNU ARM compiler**->**includes**, add the ***"${StudioSdkPath}/platform/service/power_manager/src"*** to path as the following figure.  
-      <img src="images/include path.png" width="50%" height="50%">
+        <img src="images/include path.png">
 
 20. **Configure the Duty Cycle**
     - Preamble detect need at least 40 bits. The formula is as follows.  
@@ -120,22 +120,22 @@ From the above analysis, we probably have two methods to decrease the average po
       ```C
       #define DUTY_CYCLE_ON_TIME      (4167)
       ```   
-20. **Enable EM2 mode and disable button**  
-Open the ***sl_duty_cycle_config.h*** file in the config folder, enable EM2 mode and disable button as following.
+21. **Enable EM2 mode and disable button**  
+    - Open the ***sl_duty_cycle_config.h*** file in the config folder, enable EM2 mode and disable button as following.
     ```c
     #define DUTY_CYCLE_USE_LCD_BUTTON      0
     #define DUTY_CYCLE_ALLOW_EM2           1
     ```
-21. **Build the project and flash the firmware**
+22. **Build the project and flash the firmware**
     - Click the hammer icon to build the project.
     - After compiling is completed, the .s37 binary file is located at **binaries** folder, right-click the .s37 binary and choose **Flash to device...**->**choose the target device**->**OK**.   
 
-### Measure EM2 current consumption
+## Measure EM2 current consumption
 <img src="images/sleep current.gif">  
 
- We use the power analyzer N6705C to measure the EM2 current consumption and get the average current consumption is about 1.94uA. For more info about how to measure the sleep current please refer to [AN969](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf).
+ We use the power analyzer N6705C to measure the EM2 current consumption and get the average current consumption is about 1.94 uA. For more info about how to measure the sleep current please refer to [AN969](https://www.silabs.com/documents/public/application-notes/an969-measuring-power-consumption.pdf).
 
-According to the EFR32FG14 datasheet, the above EM2 current consumption is close to the value mentioned in the datasheet. There still several peripherals are in use so the test result is expected. 
+According to the [EFR32FG14 datasheet](https://www.silabs.com/documents/public/data-sheets/efr32fg14-datasheet.pdf), the above EM2 current consumption is close to the value mentioned in the datasheet. There still several peripherals are in use so the test result is expected. 
 
 ## Apply the optimized Radio Configuration for the DSSS long-range PHY
 Silicon Labs has provided an optimized Long Range PHY with 490M 9.6 kbps OQPSK DSSS to reduce the average consumption. Below is the guide to applying it to the project.
