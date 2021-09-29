@@ -70,7 +70,7 @@ From the above analysis, we probably have two methods to decrease the average po
         <img src="images/make a copy.png" width="50%" height="50%">
 
        ```C
-       #include "em_device.h"
+        #include "em_device.h"
         #if (defined(_SILICON_LABS_32B_SERIES_0) || defined(_SILICON_LABS_32B_SERIES_1))
         #include "em_emu.h"
         #include "em_cmu.h"
@@ -82,6 +82,8 @@ From the above analysis, we probably have two methods to decrease the average po
         #include "sli_sleeptimer.h"
         #include "sl_board_control.h" // add this head file  
         #include <stdbool.h>  
+
+
         /***************************************************************************//**
         * Handle pre-deepsleep operations if any are necessary, like manually disabling
         * oscillators, change clock settings, etc.
@@ -95,9 +97,10 @@ From the above analysis, we probably have two methods to decrease the average po
                 CMU_OscillatorEnable(cmuOsc_HFXO, false, false);
                 sl_board_disable_oscillator(SL_BOARD_OSCILLATOR_TCXO);
             }
-          } 
-          
-          /***************************************************************************//**
+          }           
+
+    
+        /***************************************************************************//**
         * Handle post-sleep operations if any are necessary, like manually enabling
         * oscillators, change clock settings, etc.
         ******************************************************************************/
@@ -220,7 +223,7 @@ The below table is the comparison of power consumption between the sample projec
 |**Average Current**| 40.67 uA| 19.04 uA |  
 
 **Conclusion:**   
-The average current consumption of the sample project with optimized radio configuration is **19.04uA**, which is much better than the average current consumption of the original sample project. From the table, the average current consumption reduces **53%**, which is a very huge improvement. 
+The average current consumption of the sample project with optimized radio configuration is **19.04 uA**, which is much better than the average current consumption of the original sample project. From the table, the average current consumption reduces **53%**, which is a very huge improvement. 
 ### Sensitivity
 We use the [LR_Waveform_Generator](https://github.com/silabs-JimL/LR_WaveFormGenerator) and E4432B signal generator to measure the conducted sensitivity. Below is the test result, we can see the sensitivity of the optimized project is **-118.4 dBm**. 
 |  Output Power    |Tx Packets| Rx Packets| 
